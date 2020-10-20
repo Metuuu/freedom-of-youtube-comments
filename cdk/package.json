@@ -1,0 +1,33 @@
+{
+  "name": "freedom-of-youtube-comments-cdk",
+  "version": "0.1.0",
+  "license": "Read LICENCE file in root",
+  "engines": {
+    "node": "~12.18.3"
+  },
+  "bin": {
+    "cdk_test": "bin/cdk_test.js"
+  },
+  "scripts": {
+    "build": "echo \"The build step is not required when using JavaScript!\" && exit 0",
+    "cdk": "cdk",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "^1.69.0",
+    "aws-cdk": "^1.69.0",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsdoc": "^30.7.3",
+    "jest": "^26.6.0"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-apigateway": "^1.69.0",
+    "@aws-cdk/aws-cognito": "^1.69.0",
+    "@aws-cdk/aws-dynamodb": "^1.69.0",
+    "@aws-cdk/aws-iam": "^1.69.0",
+    "@aws-cdk/aws-lambda": "^1.69.0",
+    "@aws-cdk/core": "^1.69.0"
+  }
+}
