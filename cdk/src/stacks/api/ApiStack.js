@@ -86,7 +86,7 @@ module.exports = class ApiStack extends cdk.Stack {
 function createNodeModulesLambdaLayer(stack) {
    const nodeModulesLambdaLayer = new LayerVersion(stack, `LambdaLayer_NodeModules`, {
       layerVersionName: 'NodeModules',
-      code: Code.fromAsset('../lambda/js', {
+      code: Code.fromAsset('../api', {
          exclude: ['node_modules', 'src', '.gitignore', '.eslintrc.js', 'jsconfig.json', 'README.md', 'dist'],
          assetHashType: AssetHashType.OUTPUT,
          bundling: {
