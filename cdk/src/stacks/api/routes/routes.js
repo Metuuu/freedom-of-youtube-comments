@@ -15,6 +15,8 @@ function setupRoutes(stack, nodeModulesLambdaLayer, api, authorizer, dbTables) {
 
    // Endpoints
 
+   rg.addRoute(GET, '/test')
+
    rg.addRoute(GET, '/comments', {
       isApiKeyRequired: true,
       access: {
