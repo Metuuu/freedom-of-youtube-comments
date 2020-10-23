@@ -22,39 +22,39 @@ function setupRoutes(stack, nodeModulesLambdaLayer, api, authorizer, dbTables) {
       },
    })
 
-   rg.addRoute(POST, '/comments', {
-      isApiKeyRequired: true,
-      access: {
-         db: {
-            readWrite: [dbTables.comments, dbTables.userVotes],
-         },
-      },
-   })
+   // rg.addRoute(POST, '/comments', {
+   //    isApiKeyRequired: true,
+   //    access: {
+   //       db: {
+   //          readWrite: [dbTables.comments, dbTables.userVotes],
+   //       },
+   //    },
+   // })
 
-   rg.addRoute(GET, '/comments/{commentId}/replies', {
-      isApiKeyRequired: true,
-      access: {
-         db: { read: [dbTables.comments] },
-      },
-   })
+   // rg.addRoute(GET, '/comments/{commentId}/replies', {
+   //    isApiKeyRequired: true,
+   //    access: {
+   //       db: { read: [dbTables.comments] },
+   //    },
+   // })
 
-   rg.addRoute(POST, '/comments/{commentId}/replies', {
-      isApiKeyRequired: true,
-      access: {
-         db: {
-            readWrite: [dbTables.commentReplies, dbTables.userVotes],
-         },
-      },
-   })
+   // rg.addRoute(POST, '/comments/{commentId}/replies', {
+   //    isApiKeyRequired: true,
+   //    access: {
+   //       db: {
+   //          readWrite: [dbTables.commentReplies, dbTables.userVotes],
+   //       },
+   //    },
+   // })
 
-   rg.addRoute(DELETE, '/comments/{replyId}/replies/', {
-      isApiKeyRequired: true,
-      access: {
-         db: {
-            write: [dbTables.commentReplies, dbTables.userVotes],
-         },
-      },
-   })
+   // rg.addRoute(DELETE, '/comments/{replyId}/replies/', {
+   //    isApiKeyRequired: true,
+   //    access: {
+   //       db: {
+   //          write: [dbTables.commentReplies, dbTables.userVotes],
+   //       },
+   //    },
+   // })
 
 }
 
