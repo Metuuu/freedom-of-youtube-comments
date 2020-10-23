@@ -5,11 +5,12 @@
  *
  * @param {Object} obj
  * @param {{
-   *    removeNull?: boolean,
-   *    removeEmptyString?: boolean,
-   *    removeEmptyObject?: boolean,
-   * }} [options]
-   */
+ *    removeNull?: boolean,
+ *    removeEmptyString?: boolean,
+ *    removeEmptyObject?: boolean,
+ * }} [options]
+ * @returns {object}
+ */
 function cleanObject(obj, options) {
    const { removeNull, removeEmptyString, removeEmptyObject } = options || {}
    Object.keys(obj).forEach((key) => {
