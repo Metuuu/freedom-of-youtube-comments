@@ -7,7 +7,7 @@ const { Table, AttributeType } = require('@aws-cdk/aws-dynamodb')
  */
 module.exports = function createCommentRepliesTable(stack) {
 
-   const table = new Table(stack, `Table_Comments`, {
+   const table = new Table(stack, `Table_CommentReplies`, {
       tableName: 'CommentReplies',
       partitionKey: { name: 'id', type: AttributeType.STRING },
    })
