@@ -61,32 +61,12 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
       \*__________________________________________________*/
 
       const runtime = lambda.runtime || Runtime.NODEJS_12_X
-      const layers = []
-      let code
+      const layers = [this.sharedNodeModulesLayer]
+      const code = Code.fromAsset('../api/src', {
+         exclude: ['eventHandlers'],
+      })
 
-      switch (runtime.family) {
-         case RuntimeFamily.NODEJS:
-            code = Code.fromAsset('../lambda/js/src', {
-               exclude: ['eventHandlers'],
-            })
-            layers.push(this.sharedNodeModulesLayer)
-            break
-         case RuntimeFamily.PYTHON:
-            code = Code.fromAsset(`../lambda/py`, {
-               assetHashType: AssetHashType.OUTPUT,
-               bundling: {
-                  image: BundlingDockerImage.fromAsset(pathJoin(__dirname, '../')),
-                  command: ['sh', '-c', [
-                     'cp ./index-api.py /asset-output',
-                     `mkdir -p /asset-output${path}`,
-                     `cp ./api${path}/${method.toLowerCase()}.py /asset-output${path}`,
-                  ].join(' ; ')],
-               },
-            })
-            break
-         default:
-            throw new Error(`Runtime "${runtime.name}" not supported!`)
-      }
+      if (runtime.family !== RuntimeFamily.NODEJS) throw new Error(`Runtime "${runtime.name}" not supported!`)
 
       const handlerFunc = this.createFunction(lambdaFunctionId, {
          name: `API_Endpoint__${routePathStringForId}`,
