@@ -3,7 +3,7 @@ const { ExcAPIInvalidParameters } = require('@foyc/common-backend/models/excepti
 const { isProduction } = require('@foyc/common-backend/constants')
 const qs = require('qs')
 
-const appPath = process.env.API_PATH
+const appPath = `./api/${process.env.API_PATH}`
 const appFile = process.env.API_METHOD.toLowerCase()
 
 /**
