@@ -1,7 +1,9 @@
+const { AssetHashType, BundlingDockerImage } = require('@aws-cdk/core')
 const { Runtime, RuntimeFamily, Code } = require('@aws-cdk/aws-lambda')
 const { LambdaIntegration } = require('@aws-cdk/aws-apigateway')
 const { ServicePrincipal } = require('@aws-cdk/aws-iam')
 const LambdaGenerator = require('../LambdaGenerator')
+const { isDevelopment } = require('../../../constants')
 
 
 module.exports = class RoutesGenerator extends LambdaGenerator {
@@ -9,7 +11,7 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
    /**
     * @param {import('@aws-cdk/core').Stack} stack
     * @param {import('@aws-cdk/aws-apigateway').RestApi} api
-    * @param {import('@aws-cdk/aws-lambda').LayerVersion} sharedNodeModulesLayer
+    * @param {import('@aws-cdk/aws-lambda').LayerVersion} [sharedNodeModulesLayer]
     */
    constructor(stack, api, sharedNodeModulesLayer) {
       super(stack, sharedNodeModulesLayer)
@@ -59,10 +61,33 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
       \*__________________________________________________*/
 
       const runtime = lambda.runtime || Runtime.NODEJS_12_X
-      const layers = [this.sharedNodeModulesLayer]
-      const code = Code.fromAsset('../api/src', {
-         exclude: ['eventHandlers'],
-      })
+      const layers = []
+      let code
+
+      if (!this.sharedNodeModulesLayer) {
+         code = Code.fromAsset('../', {
+            assetHashType: AssetHashType.OUTPUT,
+            bundling: {
+               image: BundlingDockerImage.fromAsset(__dirname),
+               command: ['sh', '-c', [
+                  'cd ./api',
+                  'mkdir /tmp/node_modules',
+                  'yarn install --production --frozen-lockfile --modules-folder /tmp/node_modules',
+                  'cp -r ./src/* /tmp',
+                  'cd /tmp',
+                  `exportCode="module.exports = require('.${path}/${method.toLowerCase()}')"
+                  echo "$exportCode" > ./api/index.js`, // Replaces the "api/src/api/index.js" file with exportCode var value that is set above
+                  `cat ./api/index.js`,
+                  `ncc build ./index.js -m -o /asset-output`,
+                  `cd /asset-output`,
+                  `ls`,
+               ].join(' ; ')],
+            },
+         })
+      } else {
+         layers.push(this.sharedNodeModulesLayer)
+         code = Code.fromAsset('../api/src')
+      }
 
       if (runtime.family !== RuntimeFamily.NODEJS) throw new Error(`Runtime "${runtime.name}" not supported!`)
 

@@ -24,7 +24,7 @@ module.exports = class LambdaGenerator {
 
    /**
     * @param {import('@aws-cdk/core').Stack} stack
-    * @param {import('@aws-cdk/aws-lambda').LayerVersion} sharedNodeModulesLayer
+    * @param {import('@aws-cdk/aws-lambda').LayerVersion} [sharedNodeModulesLayer]
     */
    constructor(stack, sharedNodeModulesLayer) {
       this.stack = stack

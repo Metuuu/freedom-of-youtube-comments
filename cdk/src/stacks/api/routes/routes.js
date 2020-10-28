@@ -4,12 +4,12 @@ const { GET, POST, DELETE } = require('../../../enums/HttpMethod')
 
 /**
  * @param {import('@aws-cdk/core').Stack} stack
- * @param {import('@aws-cdk/aws-lambda').LayerVersion} nodeModulesLambdaLayer
  * @param {import('@aws-cdk/aws-apigateway').RestApi} api
  * @param {import('@aws-cdk/aws-apigateway').Authorizer?} authorizer
  * @param {import('../../db/DbStack').DBTables} dbTables Tables for granting lambda func permissions and setting table name env vars
+ * @param {import('@aws-cdk/aws-lambda').LayerVersion} [nodeModulesLambdaLayer]
  */
-function setupRoutes(stack, nodeModulesLambdaLayer, api, authorizer, dbTables) {
+function setupRoutes(stack, api, authorizer, dbTables, nodeModulesLambdaLayer) {
 
    const rg = new RoutesGenerator(stack, api, nodeModulesLambdaLayer)
 

@@ -3,9 +3,6 @@ const { ExcAPIInvalidParameters } = require('@foyc/common-backend/models/excepti
 const { isProduction } = require('@foyc/common-backend/constants')
 const qs = require('qs')
 
-const appPath = `./api/${process.env.API_PATH}`
-const appFile = process.env.API_METHOD.toLowerCase()
-
 /**
  * @typedef {object} ApiFunctionProps
  * @property {import('aws-lambda').APIGatewayProxyEvent} event
@@ -21,7 +18,7 @@ const appFile = process.env.API_METHOD.toLowerCase()
 exports.handler = async (event) => {
    try {
       // Load app function
-      const app = await requireFile(`${appPath}/${appFile}`, true)
+      const app = require('./api')
 
       // Setup Parameters
       let body = event.body
@@ -66,18 +63,4 @@ function errorToResponse(err) {
    console.error(err.stack)
    if (!isProduction) return Responses.INTERNAL_SERVER_ERROR(err.stack)
    return Responses.INTERNAL_SERVER_ERROR()
-}
-
-/**
- * @param {string} path
- * @param {boolean} throwOnNoFile
- * @returns {Function}
- */
-function requireFile(path, throwOnNoFile) {
-   // eslint-disable-next-line global-require, import/no-dynamic-require
-   try { return require(path) } catch(err) {
-      const moduleExists = !(err.code === 'MODULE_NOT_FOUND' && err.message.match(new RegExp(`Cannot find module '${path}'`, 'g')))
-      if (moduleExists) throw new Error(err.stack)
-      else if (throwOnNoFile) throw err
-   }
 }

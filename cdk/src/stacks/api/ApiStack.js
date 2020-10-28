@@ -2,7 +2,7 @@ const cdk = require('@aws-cdk/core')
 const { Code, LayerVersion, Runtime } = require('@aws-cdk/aws-lambda')
 const { BundlingDockerImage, AssetHashType, CfnOutput } = require('@aws-cdk/core')
 const { RestApi } = require('@aws-cdk/aws-apigateway')
-const { isStaging, isProduction } = require('../../constants')
+const { isStaging, isProduction, isDevelopment } = require('../../constants')
 const setupRoutes = require('./routes/routes')
 const HttpMethod = require('../../enums/HttpMethod')
 
@@ -22,7 +22,8 @@ module.exports = class ApiStack extends cdk.Stack {
       |             NODE MODULES LAMBDA LAYER              |
       \*__________________________________________________*/
 
-      const nodeModulesLambdaLayer = createNodeModulesLambdaLayer(this)
+      let nodeModulesLambdaLayer
+      if (isDevelopment) nodeModulesLambdaLayer = createNodeModulesLambdaLayer(this)
 
 
       /*‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾*\
