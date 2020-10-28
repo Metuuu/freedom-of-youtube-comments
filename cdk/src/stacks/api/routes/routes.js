@@ -18,14 +18,12 @@ function setupRoutes(stack, nodeModulesLambdaLayer, api, authorizer, dbTables) {
    rg.addRoute(GET, '/test')
 
    rg.addRoute(GET, '/comments', {
-      isApiKeyRequired: true,
       access: {
          db: { read: [dbTables.comments] },
       },
    })
 
    // rg.addRoute(POST, '/comments', {
-   //    isApiKeyRequired: true,
    //    access: {
    //       db: {
    //          readWrite: [dbTables.comments, dbTables.userVotes],
@@ -34,14 +32,12 @@ function setupRoutes(stack, nodeModulesLambdaLayer, api, authorizer, dbTables) {
    // })
 
    // rg.addRoute(GET, '/comments/{commentId}/replies', {
-   //    isApiKeyRequired: true,
    //    access: {
    //       db: { read: [dbTables.comments] },
    //    },
    // })
 
    // rg.addRoute(POST, '/comments/{commentId}/replies', {
-   //    isApiKeyRequired: true,
    //    access: {
    //       db: {
    //          readWrite: [dbTables.commentReplies, dbTables.userVotes],
@@ -50,7 +46,6 @@ function setupRoutes(stack, nodeModulesLambdaLayer, api, authorizer, dbTables) {
    // })
 
    // rg.addRoute(DELETE, '/comments/{replyId}/replies/', {
-   //    isApiKeyRequired: true,
    //    access: {
    //       db: {
    //          write: [dbTables.commentReplies, dbTables.userVotes],
