@@ -1,8 +1,8 @@
+const Responses = require('@foyc/common-backend/models/Responses')
+const validateParameters = require('@foyc/common-backend/utils/validateParameters')
+const Comment = require('@foyc/common-backend/models/Comment')
 const Joi = require('@hapi/joi')
 const { DocumentClient } = require('aws-sdk/clients/dynamodb')
-const Comment = require('../../models/Comment')
-const Responses = require('../../models/Responses')
-const validateParameters = require('../../utils/validateParameters')
 
 const docClient = new DocumentClient()
 

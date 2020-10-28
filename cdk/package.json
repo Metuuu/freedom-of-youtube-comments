@@ -1,5 +1,5 @@
 {
-  "name": "freedom-of-youtube-comments-cdk",
+  "name": "@foyc/cdk",
   "version": "0.1.0",
   "license": "Read LICENCE file in root",
   "engines": {

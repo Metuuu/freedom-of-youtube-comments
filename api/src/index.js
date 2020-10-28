@@ -1,11 +1,10 @@
+const Responses = require('@foyc/common-backend/models/Responses')
+const { ExcAPIInvalidParameters } = require('@foyc/common-backend/models/exceptions')
+const { isProduction } = require('@foyc/common-backend/constants')
 const qs = require('qs')
-const Responses = require('./models/Responses')
-const { ExcAPIInvalidParameters } = require('./models/exceptions')
-const { isProduction } = require('./constants')
 
-const methodToRun = process.env.API_METHOD
-const appPath = `./api/${process.env.API_PATH}`
-const appFile = methodToRun.toLowerCase()
+const appPath = process.env.API_PATH
+const appFile = process.env.API_METHOD.toLowerCase()
 
 /**
  * @typedef {object} ApiFunctionProps
@@ -14,10 +13,6 @@ const appFile = methodToRun.toLowerCase()
  * @property {any} queryStringParameters
  * @property {any} pathParameters
  */
-
-/*‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾*\
-|                        MAIN                        |
-\*__________________________________________________*/
 
 /**
  * @param {import('aws-lambda').APIGatewayProxyEvent} event
@@ -60,31 +55,29 @@ exports.handler = async (event) => {
 }
 
 
-
-/*‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾*\
-|                     FUNCTIONS                      |
-\*__________________________________________________*/
-
-
+/**
+ * @param {Error} err
+ * @returns {import('aws-lambda').APIGatewayProxyResult}
+ */
 function errorToResponse(err) {
    if (err instanceof ExcAPIInvalidParameters) {
       return Responses.BAD_REQUEST(err.message)
    }
-   if (!isProduction) {
-      return Responses.INTERNAL_SERVER_ERROR({
-         message: err.message,
-         stack: err.stack,
-      })
-   }
+   console.error(err.stack)
+   if (!isProduction) return Responses.INTERNAL_SERVER_ERROR(err.stack)
    return Responses.INTERNAL_SERVER_ERROR()
 }
 
-
-async function requireFile(path, throwOnNoFile) {
+/**
+ * @param {string} path
+ * @param {boolean} throwOnNoFile
+ * @returns {Function}
+ */
+function requireFile(path, throwOnNoFile) {
    // eslint-disable-next-line global-require, import/no-dynamic-require
    try { return require(path) } catch(err) {
-      const moduleNotFound = (err.code === 'MODULE_NOT_FOUND' && err.message.match(new RegExp(`Cannot find module '${path}'`, 'g')))
-      if (!moduleNotFound) throw new Error(err.stack)
+      const moduleExists = !(err.code === 'MODULE_NOT_FOUND' && err.message.match(new RegExp(`Cannot find module '${path}'`, 'g')))
+      if (moduleExists) throw new Error(err.stack)
       else if (throwOnNoFile) throw err
    }
 }

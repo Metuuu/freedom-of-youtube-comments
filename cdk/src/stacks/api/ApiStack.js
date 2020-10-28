@@ -86,26 +86,20 @@ module.exports = class ApiStack extends cdk.Stack {
 function createNodeModulesLambdaLayer(stack) {
    const nodeModulesLambdaLayer = new LayerVersion(stack, `LambdaLayer_NodeModules`, {
       layerVersionName: 'NodeModules',
-      code: Code.fromAsset('../api', {
-         exclude: ['node_modules', 'src', '.gitignore', '.eslintrc.js', 'jsconfig.json', 'README.md', 'dist'],
+      code: Code.fromAsset('../', {
          assetHashType: AssetHashType.OUTPUT,
          bundling: {
             image: BundlingDockerImage.fromAsset(__dirname),
             command: ['sh', '-c', [
-               'cp package.json /asset-output/package.json',
-               'cp yarn.lock /asset-output/yarn.lock',
-               /*
-                * OPTIMIZE: Would copying the node_modules be faster than installing all of the packages from scratch?
-                * yarn install would only need to purge devDependencies and not download the packages. There isn't even cache.
-                * 'cp -r node_modules /asset-output',
-                */
-               'cd /asset-output',
-               'yarn install --production --frozen-lockfile',
+               'cd ./api',
+               'mkdir /asset-output/node_modules',
+               'yarn install --production --frozen-lockfile --modules-folder /asset-output/node_modules',
+               'cd /asset-output/node_modules',
             ].join(' ; ')],
          },
       }),
       compatibleRuntimes: [Runtime.NODEJS_12_X],
-      description: 'Contains node-modules for API lambda functions.',
+      description: 'Contains node_modules for API lambda functions.',
    })
    return nodeModulesLambdaLayer
 }

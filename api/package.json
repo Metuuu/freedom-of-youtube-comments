@@ -1,27 +1,23 @@
 {
-	"name": "freedom-of-youtube-comments-api",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"engines": {
-		"node": "~12.18.3"
-	},
-	"dependencies": {
-		"@hapi/joi": "^17.1.1",
-		"aws-sdk": "^2.775.0",
-		"js-yaml": "^3.14.0",
-		"json-logic-js": "^1.2.3",
-		"jsonwebtoken": "^8.5.1",
-		"qs": "^6.9.4",
-		"uuid": "^8.3.1"
-	},
-	"devDependencies": {
-		"eslint": "^7.11.0",
-		"eslint-config-airbnb-base": "^14.2.0",
-		"eslint-plugin-import": "^2.22.1",
-		"eslint-plugin-jsdoc": "^30.7.3"
-	},
-	"scripts": {},
-	"author": "",
-	"license": "ISC"
+  "name": "@foyc/api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "engines": {
+    "node": "~12.18.3"
+  },
+  "dependencies": {
+    "@foyc/common-backend": "file:../common-backend",
+    "qs": "^6.9.4"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.24.1",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsdoc": "^30.7.3"
+  },
+  "scripts": {},
+  "author": "",
+  "license": "ISC"
 }
