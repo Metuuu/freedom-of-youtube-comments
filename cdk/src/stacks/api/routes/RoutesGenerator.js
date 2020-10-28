@@ -1,6 +1,4 @@
-const pathJoin = require('path').join
 const { Runtime, RuntimeFamily, Code } = require('@aws-cdk/aws-lambda')
-const { BundlingDockerImage, AssetHashType } = require('@aws-cdk/core')
 const { LambdaIntegration } = require('@aws-cdk/aws-apigateway')
 const { ServicePrincipal } = require('@aws-cdk/aws-iam')
 const LambdaGenerator = require('../LambdaGenerator')
@@ -70,7 +68,7 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
 
       const handlerFunc = this.createFunction(lambdaFunctionId, {
          name: `API_Endpoint__${routePathStringForId}`,
-         handler: 'index-api.handler',
+         handler: 'index.handler',
          env: environment,
          access,
          code,
