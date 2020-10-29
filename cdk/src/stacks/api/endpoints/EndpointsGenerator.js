@@ -8,7 +8,7 @@ const LambdaGenerator = require('../LambdaGenerator')
 let hasApiCodeBeenBuilt = false
 
 
-module.exports = class RoutesGenerator extends LambdaGenerator {
+module.exports = class EndpointsGenerator extends LambdaGenerator {
 
    /**
     * @param {import('@aws-cdk/core').Stack} stack
@@ -26,7 +26,7 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
 
    /**
     * @typedef {string} Path
-    * Route for the API method.
+    * Endpoint for the API method.
     * Path params are created by wrapping the param part of the path with curly braces.
     */
 
@@ -40,12 +40,12 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
     * @param {import('../LambdaGenerator').LambdaFunctionProperties} [props.lambda]
     * @param {Object<string, string>} [props.env]
     */
-   addRoute(method, path, props) {
+   addEndpoint(method, path, props) {
       const { isApiKeyRequired, authorizer, access = {}, lambda = {}, env = {} } = props || {}
 
-      const routePathStringForId = (`${path.replace(/^\//, '').replace(/\//g, '_')}_${method}`).replace(/\{/g, '-').replace(/\}/g, '-')
-      const routeId = `API_Route__${routePathStringForId}`
-      const lambdaFunctionId = `API_LambdaFunc__${routePathStringForId}`
+      const endpointPathStringForId = (`${path.replace(/^\//, '').replace(/\//g, '_')}_${method}`).replace(/\{/g, '-').replace(/\}/g, '-')
+      const endpointId = `API_Endpoint__${endpointPathStringForId}`
+      const lambdaFunctionId = `API_LambdaFunc__${endpointPathStringForId}`
 
 
       /*‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾*\
@@ -90,7 +90,7 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
                   `echo -e "\\e[92mBuilding \\e[96m${method} ${path}\\e[39m"`,
                   'cd build',
                   `exportCode="module.exports = require('.${path}/${method.toLowerCase()}')"
-                  echo "$exportCode" > api/index.js`, // Replaces the "build/api/index.js" file with exportCode var value that is set above. The code requires endpoint that is currently being built. @vercel/ncc doesn't support dynamic imports.
+                  echo "$exportCode" > endpoints/index.js`, // Replaces the "build/endpoints/index.js" file with exportCode var value that is set above. The code requires endpoint that is currently being built. @vercel/ncc doesn't support dynamic imports.
                   `ncc build ./index.js -s -o /asset-output`, // Build the code to a single file containing node_modules and remove all non used code is removed.
                ].join(' ; ')],
             },
@@ -103,7 +103,7 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
       if (runtime.family !== RuntimeFamily.NODEJS) throw new Error(`Runtime "${runtime.name}" not supported!`)
 
       const handlerFunc = this.createFunction(lambdaFunctionId, {
-         name: `API_Endpoint__${routePathStringForId}`,
+         name: `API_Endpoint__${endpointPathStringForId}`,
          handler: 'index.handler',
          env: environment,
          access,
@@ -158,8 +158,8 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
       |      Allow ApiGateway to Invoke the Function       |
       \*__________________________________________________*/
 
-      // Grant access for the route to invoke the Lambda function
-      handlerFunc.addPermission(`${routeId}_InvokePermission`, {
+      // Grant access for the endpoint to invoke the Lambda function
+      handlerFunc.addPermission(`${endpointId}_InvokePermission`, {
          principal: new ServicePrincipal('apigateway.amazonaws.com'),
          sourceArn: this.stack.formatArn({
             service: 'execute-api',

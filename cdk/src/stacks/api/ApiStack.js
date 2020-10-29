@@ -3,7 +3,7 @@ const { Code, LayerVersion, Runtime } = require('@aws-cdk/aws-lambda')
 const { BundlingDockerImage, AssetHashType, CfnOutput } = require('@aws-cdk/core')
 const { RestApi } = require('@aws-cdk/aws-apigateway')
 const { isStaging, isProduction, isDevelopment } = require('../../constants')
-const setupRoutes = require('./routes/routes')
+const setupEndpoints = require('./endpoints/endpoints')
 const HttpMethod = require('../../enums/HttpMethod')
 
 
@@ -54,7 +54,7 @@ module.exports = class ApiStack extends cdk.Stack {
          apiId: api.httpApiId,
          name: authorizerId,
          authorizerType: 'JWT',
-         identitySource: ['$request.header.Authorization'], // route.request.header.Auth
+         identitySource: ['$request.header.Authorization'], // endpoint.request.header.Auth
          jwtConfiguration: {
             issuer: ``,
             audience: [],
@@ -70,16 +70,16 @@ module.exports = class ApiStack extends cdk.Stack {
          value: api.url || '',
       })
 
-      // Routes
-      setupRoutes(this, api, null, dbTables, nodeModulesLambdaLayer)
+      // Endpoints
+      setupEndpoints(this, api, null, dbTables, nodeModulesLambdaLayer)
    }
 
 }
 
 
 /**
- * Returns lambda layer that contains shared node modules between all routes.
- * This function also compiles API code using "yarn build" command, so when routes are being generated,
+ * Returns lambda layer that contains shared node modules between all endpoints.
+ * This function also compiles API code using "yarn build" command, so when endpoints are being generated,
  * there is everything ready and no more Docker containers are needed to be run.
  * @param {import('@aws-cdk/core').Stack} stack
  * @returns {LayerVersion}

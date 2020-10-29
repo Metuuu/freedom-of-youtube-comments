@@ -1,4 +1,4 @@
-# RoutesGenerator uses this Dockerfile for building API endpoints
+# EndpointsGenerator uses this Dockerfile for building API endpoints
 
 FROM alpine
 

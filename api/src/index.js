@@ -2,6 +2,8 @@ const Responses = require('@foyc/common-backend/models/Responses')
 const { ExcAPIInvalidParameters } = require('@foyc/common-backend/models/exceptions')
 const { isProduction } = require('@foyc/common-backend/constants')
 const qs = require('qs')
+const endpoint = require('./endpoints')
+
 
 /**
  * @typedef {object} ApiFunctionProps
@@ -17,9 +19,6 @@ const qs = require('qs')
  */
 exports.handler = async (event) => {
    try {
-      // Load app function
-      const app = require('./api')
-
       // Setup Parameters
       let body = event.body
       if (typeof event.body === 'string') {
@@ -38,7 +37,7 @@ exports.handler = async (event) => {
       }
 
       // Main
-      const response = await app({ event, body, queryStringParameters, pathParameters })
+      const response = await endpoint({ event, body, queryStringParameters, pathParameters })
 
       if (response.statusCode === undefined || response.headers === undefined) {
          return Responses.INTERNAL_SERVER_ERROR(`API didn't return response. You should return: "Responses.<STATUS>(...)"`)
