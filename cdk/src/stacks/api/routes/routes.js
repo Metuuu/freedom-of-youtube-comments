@@ -15,7 +15,8 @@ function setupRoutes(stack, api, authorizer, dbTables, nodeModulesLambdaLayer) {
 
    // Endpoints
 
-   rg.addRoute(GET, '/test')
+   rg.addRoute(GET, '/test/success')
+   rg.addRoute(GET, '/test/error')
 
    rg.addRoute(GET, '/comments', {
       access: {
