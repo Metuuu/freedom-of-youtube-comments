@@ -37,14 +37,14 @@ module.exports = class LambdaGenerator {
     * @param {string} props.name
     * @param {string} props.handler
     * @param {import('@aws-cdk/aws-lambda').Code} props.code
-    * @param {import('@aws-cdk/aws-lambda').ILayerVersion[]} props.layers
+    * @param {import('@aws-cdk/aws-lambda').ILayerVersion[]} [props.layers]
     * @param {LambdaAccessProperties} [props.access]
     * @param {LambdaFunctionProperties} [props.lambda]
     * @param {Object<string, string>} [props.env]
     * @returns {import('@aws-cdk/aws-lambda').Function}
     */
    createFunction(id, props) {
-      const { name, handler, code, layers, access = {}, lambda = {}, env = {} } = props || {}
+      const { name, handler, code, layers = [], access = {}, lambda = {}, env = {} } = props || {}
       const dbAccess = access.db || {}
 
 
@@ -75,6 +75,9 @@ module.exports = class LambdaGenerator {
       const timeout = Duration.seconds(lambda.timeout || 10)
       const runtime = lambda.runtime || Runtime.NODEJS_12_X
 
+      const lambdaLayers = [...layers]
+      if (this.sharedNodeModulesLayer) lambdaLayers.push(this.sharedNodeModulesLayer)
+
       const handlerFunc = new Function(this.stack, id, {
          functionName: name,
          memorySize: lambda.memorySize,
@@ -83,7 +86,7 @@ module.exports = class LambdaGenerator {
          environment,
          runtime,
          timeout,
-         layers,
+         layers: lambdaLayers,
       })
       layers.forEach((layer) => handlerFunc.node.addDependency(layer))
 

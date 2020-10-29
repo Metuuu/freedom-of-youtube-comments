@@ -71,7 +71,7 @@ module.exports = class ApiStack extends cdk.Stack {
       })
 
       // Routes
-      setupRoutes(this, nodeModulesLambdaLayer, api, null, dbTables)
+      setupRoutes(this, api, null, dbTables, nodeModulesLambdaLayer)
    }
 
 }

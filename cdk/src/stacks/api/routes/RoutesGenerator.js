@@ -61,7 +61,6 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
       \*__________________________________________________*/
 
       const runtime = lambda.runtime || Runtime.NODEJS_12_X
-      const layers = []
       let code
 
       if (!this.sharedNodeModulesLayer) {
@@ -97,7 +96,6 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
          env: environment,
          access,
          code,
-         layers,
          lambda,
       })
 
