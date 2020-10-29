@@ -4,7 +4,7 @@
    "private": true,
    "dependencies": {
       "@hapi/joi": "^17.1.1",
-      "aws-sdk": "^2.780.0",
+      "aws-sdk": "^2.781.0",
       "jsonwebtoken": "^8.5.1"
    }
 }

@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@foyc/common-backend": "file:../common-backend",
+    "aws-sdk": "^2.781.0",
     "qs": "^6.9.4"
   },
   "devDependencies": {
