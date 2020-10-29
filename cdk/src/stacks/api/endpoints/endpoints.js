@@ -11,20 +11,20 @@ const { GET, POST, DELETE } = require('../../../enums/HttpMethod')
  */
 function setupEndpoints(stack, api, authorizer, dbTables, nodeModulesLambdaLayer) {
 
-   const rg = new EndpointsGenerator(stack, api, nodeModulesLambdaLayer)
+   const eg = new EndpointsGenerator(stack, api, nodeModulesLambdaLayer)
 
    // Endpoints
 
-   rg.addEndpoint(GET, '/test/success')
-   rg.addEndpoint(GET, '/test/error')
+   eg.addEndpoint(GET, '/test/success')
+   eg.addEndpoint(GET, '/test/error')
 
-   rg.addEndpoint(GET, '/comments', {
+   eg.addEndpoint(GET, '/comments', {
       access: {
          db: { read: [dbTables.comments] },
       },
    })
 
-   // rg.addEndpoint(POST, '/comments', {
+   // eg.addEndpoint(POST, '/comments', {
    //    access: {
    //       db: {
    //          readWrite: [dbTables.comments, dbTables.userVotes],
@@ -32,13 +32,13 @@ function setupEndpoints(stack, api, authorizer, dbTables, nodeModulesLambdaLayer
    //    },
    // })
 
-   // rg.addEndpoint(GET, '/comments/{commentId}/replies', {
+   // eg.addEndpoint(GET, '/comments/{commentId}/replies', {
    //    access: {
    //       db: { read: [dbTables.comments] },
    //    },
    // })
 
-   // rg.addEndpoint(POST, '/comments/{commentId}/replies', {
+   // eg.addEndpoint(POST, '/comments/{commentId}/replies', {
    //    access: {
    //       db: {
    //          readWrite: [dbTables.commentReplies, dbTables.userVotes],
@@ -46,7 +46,7 @@ function setupEndpoints(stack, api, authorizer, dbTables, nodeModulesLambdaLayer
    //    },
    // })
 
-   // rg.addEndpoint(DELETE, '/comments/{replyId}/replies/', {
+   // eg.addEndpoint(DELETE, '/comments/{replyId}/replies/', {
    //    access: {
    //       db: {
    //          write: [dbTables.commentReplies, dbTables.userVotes],
