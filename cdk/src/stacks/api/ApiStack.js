@@ -91,6 +91,10 @@ function createNodeModulesLambdaLayer(stack) {
          assetHashType: AssetHashType.OUTPUT,
          bundling: {
             image: BundlingDockerImage.fromAsset(__dirname),
+            volumes: [
+               { hostPath: '/tmp', containerPath: '/tmp' },
+               { hostPath: '/tmp', containerPath: '/.cache' },
+            ],
             command: ['sh', '-c', [
                'cd ./api',
                'mkdir /asset-output/node_modules',
