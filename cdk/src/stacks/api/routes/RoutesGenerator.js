@@ -3,7 +3,9 @@ const { Runtime, RuntimeFamily, Code } = require('@aws-cdk/aws-lambda')
 const { LambdaIntegration } = require('@aws-cdk/aws-apigateway')
 const { ServicePrincipal } = require('@aws-cdk/aws-iam')
 const LambdaGenerator = require('../LambdaGenerator')
-const { isDevelopment } = require('../../../constants')
+
+// This variable is used for determining if api code has to be built before building it with @vercel/ncc to a single file
+let hasApiCodeBeenBuilt = false
 
 
 module.exports = class RoutesGenerator extends LambdaGenerator {
@@ -18,6 +20,8 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
       /** @type {{ path: Path, resource: import('@aws-cdk/aws-apigateway').Resource }[]} */
       this.existingResources = []
       this.api = api
+      /** If shared node_modules are not used, optimize the code using @vercel/ncc */
+      this.optimizeBuildToSingleFile = !this.sharedNodeModulesLayer
    }
 
    /**
@@ -63,28 +67,36 @@ module.exports = class RoutesGenerator extends LambdaGenerator {
       const runtime = lambda.runtime || Runtime.NODEJS_12_X
       let code
 
-      if (!this.sharedNodeModulesLayer) {
+      if (this.optimizeBuildToSingleFile) {
          code = Code.fromAsset('../', {
             assetHashType: AssetHashType.OUTPUT,
             bundling: {
                image: BundlingDockerImage.fromAsset(__dirname),
+               volumes: [
+                  { hostPath: '/tmp', containerPath: '/tmp' },
+                  { hostPath: '/tmp', containerPath: '/.cache' },
+               ],
                command: ['sh', '-c', [
-                  'cd ./api',
-                  'mkdir /tmp/node_modules',
-                  'yarn install --production --frozen-lockfile --modules-folder /tmp/node_modules',
-                  'cp -r ./src/* /tmp',
-                  'cd /tmp',
+                  'cd api',
+
+                  // Build (skip the build process if already been built)
+                  ...(!hasApiCodeBeenBuilt ? [
+                     'echo -e "\\e[92mBuilding \\e[96mAPI code\\e[39m"',
+                     'rm -r build',
+                     'yarn install --production --frozen-lockfile --modules-folder ./build/node_modules', // Build production node_modules to build folder
+                     'cp -r src/* build', // Copy src folder to build folder
+                  ] : []),
+
+                  `echo -e "\\e[92mBuilding \\e[96m${method} ${path}\\e[39m"`,
+                  'cd build',
                   `exportCode="module.exports = require('.${path}/${method.toLowerCase()}')"
-                  echo "$exportCode" > ./api/index.js`, // Replaces the "api/src/api/index.js" file with exportCode var value that is set above
-                  `cat ./api/index.js`,
-                  `ncc build ./index.js -m -o /asset-output`,
-                  `cd /asset-output`,
-                  `ls`,
+                  echo "$exportCode" > api/index.js`, // Replaces the "build/api/index.js" file with exportCode var value that is set above. The code requires endpoint that is currently being built. @vercel/ncc doesn't support dynamic imports.
+                  `ncc build ./index.js -s -o /asset-output`, // Build the code to a single file containing node_modules and remove all non used code is removed.
                ].join(' ; ')],
             },
          })
+         hasApiCodeBeenBuilt = true
       } else {
-         layers.push(this.sharedNodeModulesLayer)
          code = Code.fromAsset('../api/src')
       }
 
