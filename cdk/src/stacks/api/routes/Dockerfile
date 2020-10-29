@@ -1,3 +1,5 @@
+# RoutesGenerator uses this Dockerfile for building API endpoints
+
 FROM alpine
 
 ## Install yarn
